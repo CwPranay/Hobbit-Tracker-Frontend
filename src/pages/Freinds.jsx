@@ -11,6 +11,9 @@ const Friends = () => {
   const [stats, setStats] = useState({ followers: 0, following: 0 });
   const [loading, setLoading] = useState(false);
 
+  const isUserFollowing = (userId) =>
+    following.some((f) => f.following.id === userId);
+
   const loadStats = async () => {
     const res = await api.get("/friends/stats");
     setStats({
@@ -46,9 +49,8 @@ const Friends = () => {
     try {
       await api.post(`/friends/follow/${id}`);
       toast.success("Followed");
-      loadStats();
-      loadLists();
-      searchUsers();
+      await loadStats();
+      await loadLists();
     } catch (err) {
       toast.error(err.response?.data?.message || "Unable to follow");
     }
@@ -58,9 +60,8 @@ const Friends = () => {
     try {
       await api.delete(`/friends/unfollow/${id}`);
       toast.success("Unfollowed");
-      loadStats();
-      loadLists();
-      searchUsers();
+      await loadStats();
+      await loadLists();
     } catch {
       toast.error("Unable to unfollow");
     }
@@ -76,12 +77,20 @@ const Friends = () => {
     return () => clearTimeout(delay);
   }, [query]);
 
+  const primaryBtn =
+    "cursor-pointer px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition text-sm font-medium";
+
+  const dangerBtn =
+    "cursor-pointer px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 active:scale-95 transition text-sm font-medium";
+
+  const ghostBtn =
+    "cursor-pointer px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 active:scale-95 transition text-sm font-medium";
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white px-6 py-8">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold mb-4">Friends</h1>
 
-        
         <div className="flex gap-6 mb-6">
           <div>
             <p className="text-sm text-zinc-400">Followers</p>
@@ -93,16 +102,15 @@ const Friends = () => {
           </div>
         </div>
 
-        
         <div className="flex gap-3 mb-6">
           {["search", "followers", "following"].map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-4 py-2 cursor-pointer rounded-lg text-sm ${
+              className={`cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition ${
                 tab === t
                   ? "bg-indigo-600"
-                  : "bg-zinc-900 border border-zinc-800"
+                  : "bg-zinc-900 border border-zinc-800 hover:bg-zinc-800"
               }`}
             >
               {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -110,75 +118,99 @@ const Friends = () => {
           ))}
         </div>
 
-        
         {tab === "search" && (
           <>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name or email"
-              className="w-full px-4 py-3 rounded-lg bg-zinc-900
-                         border border-zinc-800 text-white
-                         placeholder:text-zinc-500"
+              placeholder="Search by name"
+              className="w-full mb-4 px-4 py-3 rounded-lg bg-zinc-900 border border-zinc-800 text-white placeholder:text-zinc-500"
             />
 
-            {loading && <p className="mt-4 text-zinc-400">Searching...</p>}
+            {loading && <p className="text-zinc-400">Searching...</p>}
 
-            <div className="mt-6 space-y-3">
-              {results.map((user) => (
-                <div
-                  key={user.id}
-                  className="flex items-center justify-between
-                             bg-zinc-900 border border-zinc-800
-                             rounded-lg p-4"
-                >
-                  <div>
-                    <p className="font-medium">{user.name}</p>
-                    <p className="text-sm text-zinc-400">{user.email}</p>
+            {results.map((user) => (
+              <div
+                key={user.id}
+                className="flex justify-between items-center bg-zinc-900 p-4 mb-3 rounded-lg"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-full bg-indigo-600 flex items-center justify-center font-semibold">
+                    {user.name.charAt(0).toUpperCase()}
                   </div>
-
-                  {user.isFollowing ? (
-                    <button
-                      onClick={() => unfollowUser(user.id)}
-                      className="px-4 cursor-pointer py-2 text-sm rounded-lg
-                                 border border-zinc-700 hover:bg-zinc-800"
-                    >
-                      Unfollow
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => followUser(user.id)}
-                      className="px-4 cursor-pointer py-2 text-sm rounded-lg
-                                 bg-indigo-600 hover:bg-indigo-700"
-                    >
-                      Follow
-                    </button>
-                  )}
+                  <p className="font-medium">{user.name}</p>
                 </div>
-              ))}
-            </div>
+
+                {isUserFollowing(user.id) ? (
+                  <button
+                    className={dangerBtn}
+                    onClick={() => unfollowUser(user.id)}
+                  >
+                    Unfollow
+                  </button>
+                ) : (
+                  <button
+                    className={primaryBtn}
+                    onClick={() => followUser(user.id)}
+                  >
+                    Follow
+                  </button>
+                )}
+              </div>
+            ))}
           </>
         )}
 
-        
         {tab === "followers" &&
           followers.map((f) => (
             <div
               key={f.follower.id}
-              className="bg-zinc-900 border border-zinc-800 p-4 rounded-lg mb-3"
+              className="flex justify-between items-center bg-zinc-900 p-4 mb-3 rounded-lg"
             >
-              {f.follower.name}
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full bg-indigo-600 flex items-center justify-center font-semibold">
+                  {f.follower.name.charAt(0).toUpperCase()}
+                </div>
+                <p className="font-medium">{f.follower.name}</p>
+              </div>
+
+              {isUserFollowing(f.follower.id) ? (
+                <button
+                  className={dangerBtn}
+                  onClick={() => unfollowUser(f.follower.id)}
+                >
+                  Unfollow
+                </button>
+              ) : (
+                <button
+                  className={primaryBtn}
+                  onClick={() => followUser(f.follower.id)}
+                >
+                  Follow back
+                </button>
+              )}
             </div>
           ))}
 
-        
         {tab === "following" &&
           following.map((f) => (
             <div
               key={f.following.id}
-              className="bg-zinc-900 border border-zinc-800 p-4 rounded-lg mb-3"
+              className="flex justify-between items-center bg-zinc-900 p-4 mb-3 rounded-lg"
             >
-              {f.following.name}
+              <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full bg-indigo-600 flex items-center justify-center font-semibold">
+                  {f.following.name.charAt(0).toUpperCase()}
+                </div>
+                <p className="font-medium">{f.following.name}</p>
+              </div>
+
+              <button
+                className={dangerBtn}
+                onClick={() => unfollowUser(f.following.id)}
+              >
+                Unfollow
+              </button>
             </div>
           ))}
       </div>
