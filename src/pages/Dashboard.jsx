@@ -62,7 +62,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-zinc-950 text-white px-6 py-8">
       <div className="max-w-4xl mx-auto">
 
-        {/* Header */}
+       
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">My Habits</h1>
           <button
@@ -73,7 +73,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Modals */}
+        
         {showModal && (
           <AddHabitModal
             onClose={() => setShowModal(false)}
@@ -92,7 +92,7 @@ export default function Dashboard() {
           />
         )}
 
-        {/* States */}
+        
         {loading && (
           <p className="text-zinc-400">Loading habits...</p>
         )}
