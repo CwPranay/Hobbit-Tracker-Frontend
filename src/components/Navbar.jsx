@@ -18,7 +18,7 @@ const Navbar = () => {
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold text-white">
-          HabitTracker
+          Hobbie Tracker
         </Link>
 
         {/* Desktop */}

@@ -29,11 +29,11 @@ export default function Dashboard() {
     try {
       setDeleting(true);
       await api.delete(`/api/habits/${deleteHabitId}`);
-      toast.success("Habit deleted");
+      toast.success("Hobbie deleted");
       setDeleteHabitId(null);
       fetchHabits();
     } catch {
-      toast.error("Failed to delete habit");
+      toast.error("Failed to delete hobbie");
     } finally {
       setDeleting(false);
     }
@@ -64,12 +64,12 @@ export default function Dashboard() {
 
        
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">My Habits</h1>
+          <h1 className="text-3xl font-bold">My Hobbies</h1>
           <button
             onClick={() => setShowModal(true)}
             className="px-4 py-2 cursor-pointer rounded-lg bg-indigo-600 hover:bg-indigo-700 text-sm font-medium"
           >
-            + Add Habit
+            + Add Hobbie
           </button>
         </div>
 
@@ -94,12 +94,12 @@ export default function Dashboard() {
 
         
         {loading && (
-          <p className="text-zinc-400">Loading habits...</p>
+          <p className="text-zinc-400">Loading hobbies...</p>
         )}
 
         {!loading && habits.length === 0 && (
           <p className="text-zinc-500 italic">
-            You haven’t added any habits yet.
+            You haven’t added any hobbie yet.
           </p>
         )}
 
