@@ -24,7 +24,7 @@ const AddHabitModal = ({ onClose, onCreated }) => {
 
     try {
       setLoading(true);
-      await api.post("/habits", form);
+      await api.post("/api/habits", form);
       toast.success("Habit created 🎉");
       onCreated();
       onClose();

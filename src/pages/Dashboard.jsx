@@ -14,7 +14,7 @@ export default function Dashboard() {
 
   const fetchHabits = async () => {
     try {
-      const res = await api.get("/habits");
+      const res = await api.get("/api/habits");
       setHabits(res.data);
     } catch {
       toast.error("Failed to fetch habits");
@@ -28,7 +28,7 @@ export default function Dashboard() {
 
     try {
       setDeleting(true);
-      await api.delete(`/habits/${deleteHabitId}`);
+      await api.delete(`/api/habits/${deleteHabitId}`);
       toast.success("Habit deleted");
       setDeleteHabitId(null);
       fetchHabits();
@@ -43,7 +43,7 @@ export default function Dashboard() {
     if (habit.checkedToday) return;
 
     try {
-      await api.post(`/habits/${habit.id}/checkin`, {});
+      await api.post(`/api/habits/${habit.id}/checkin`, {});
       toast.success("Check-in completed 🎯");
       fetchHabits();
     } catch (err) {

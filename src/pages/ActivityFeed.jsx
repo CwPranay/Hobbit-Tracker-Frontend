@@ -20,7 +20,7 @@ export default function ActivityFeed() {
   useEffect(() => {
     const loadFeed = async () => {
       try {
-        const res = await api.get("/activity/feed");
+        const res = await api.get("/api/activity/feed");
         setFeed(res.data);
       } finally {
         setLoading(false);

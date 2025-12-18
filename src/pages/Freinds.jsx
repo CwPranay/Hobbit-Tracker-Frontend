@@ -15,7 +15,7 @@ const Friends = () => {
     following.some((f) => f.following.id === userId);
 
   const loadStats = async () => {
-    const res = await api.get("/friends/stats");
+    const res = await api.get("/api/friends/stats");
     setStats({
       followers: res.data.followersCount,
       following: res.data.followingCount,
@@ -23,7 +23,7 @@ const Friends = () => {
   };
 
   const loadLists = async () => {
-    const res = await api.get("/friends/list");
+    const res = await api.get("/api/friends/list");
     setFollowers(res.data.followers);
     setFollowing(res.data.following);
   };
@@ -36,7 +36,7 @@ const Friends = () => {
 
     try {
       setLoading(true);
-      const res = await api.get(`/friends/search?q=${query}`);
+      const res = await api.get(`/api/friends/search?q=${query}`);
       setResults(res.data);
     } catch {
       toast.error("Failed to search users");
@@ -47,7 +47,7 @@ const Friends = () => {
 
   const followUser = async (id) => {
     try {
-      await api.post(`/friends/follow/${id}`);
+      await api.post(`/api/friends/follow/${id}`);
       toast.success("Followed");
       await loadStats();
       await loadLists();
@@ -58,7 +58,7 @@ const Friends = () => {
 
   const unfollowUser = async (id) => {
     try {
-      await api.delete(`/friends/unfollow/${id}`);
+      await api.delete(`/api/friends/unfollow/${id}`);
       toast.success("Unfollowed");
       await loadStats();
       await loadLists();

@@ -29,7 +29,7 @@ const Register = () => {
 
     try {
       setLoading(true);
-      await api.post("/auth/register", form);
+      await api.post("/api/auth/register", form);
       toast.success("Account created successfully");
       navigate("/login");
     } catch (err) {
